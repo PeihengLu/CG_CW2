@@ -39,8 +39,8 @@ Camera* Camera::createCamera(Value& cameraSpecs){
 				cameraSpecs["height"].GetInt(),
 				cameraSpecs["fov"].GetInt(),
 				arrayToVec(cameraSpecs["position"]),
-				arrayToVec(cameraSpecs["lookat"]),
-				arrayToVec(cameraSpecs["up"]));
+				arrayToVec(cameraSpecs["lookat"]).normalize(),
+				arrayToVec(cameraSpecs["up"]).normalize());
 
 	}else if (cameraType.compare("thinlens")==0){
 		return new Pinhole(cameraSpecs["width"].GetInt(),

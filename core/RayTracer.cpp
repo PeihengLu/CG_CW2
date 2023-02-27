@@ -27,20 +27,24 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 	for (int w = 0; w < camera->width; w++) {
 		for (int h = 0; h < camera->height; h++){
 			Ray cameraRay = getCameraRay(camera, w, h);
+			// std::cout<<"camera ray direction: <"<<std::to_string(cameraRay.rayDirection.x)<<"," <<std::to_string(cameraRay.rayDirection.y) <<"," <<std::to_string(cameraRay.rayDirection.z) << ">\n";
 			std::tuple<bool, Hit> result = scene->testIntercept(cameraRay);
 			if (std::get<0>(result)){
 				Hit hit = std::get<1>(result);
+				// std::cout<<"interception point is: <"<<std::to_string(hit.point.x)<<"," <<std::to_string(hit.point.y) <<"," <<std::to_string(hit.point.z) << ">\n";
 				for (LightSource* light: scene->getLightSources()) {
 					Ray shadowRay;
 					shadowRay.origin = hit.point;
-					shadowRay.rayDirection = light->position - shadowRay.origin;
+					shadowRay.rayDirection = (light->position - shadowRay.origin).normalize();
 					shadowRay.rayDirection = SHADOW;
 					std::tuple<bool, Hit> shadowResult = scene->testIntercept(shadowRay);
-					if (!std::get<0>(shadowResult)) {
+					if (!std::get<0>(shadowResult)) { // if this point is in the shadow for this light source
 						continue;
 					} else {
+						Vec3f intensity = light->is;
+						intensity /= (hit.point - light->position).norm();
 						// TODO add bling phong model
-						pixelbuffer[w + h * camera->width] = pixelbuffer[w + h * camera->width] + hit.material->diffusecolor;
+						pixelbuffer[w + h * camera->width] = pixelbuffer[w + h * camera->width] + intensity * hit.material->diffusecolor;
 					}
 				}
 			} else {
@@ -54,6 +58,7 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 	return pixelbuffer;
 }
 
+// TODO camera ray could be wrong
 Ray getCameraRay(Camera* camera, int w, int h){
 	// defining the camera primary ray from the camera position to the pixel position
 	Ray cameraRay;
@@ -66,7 +71,7 @@ Ray getCameraRay(Camera* camera, int w, int h){
 	// distance from the camera to the image plane
 	float distance = halfWidth / tan(camera->fov / 2.0f);
 	// calculate the right using lookat and up, useful for transforming pixel location
-	Vec3f right = camera->lookat.crossProduct(camera->up).normalize();
+	Vec3f right = (camera->lookat.crossProduct(camera->up)).normalize();
 	float imageX = ((2.0f * w) / camera->width - 1.0f) * halfWidth;
 	float imageY = (1.0f - (2.0f * h) / camera->height) * halfHeight;
 	Vec3f pixelLocation = camera->position + camera->lookat*distance + right*imageX + camera->up*imageY;

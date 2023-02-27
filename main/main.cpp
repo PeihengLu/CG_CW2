@@ -43,7 +43,7 @@ int main(int argc, char* argv[]){
 
 	//generate the scene according to the input file
 	Scene* scene=new Scene();
-	printf("Creating New Scene");
+	printf("Creating New Scene\n");
 	scene->createScene(d["scene"]);
 
 	//
