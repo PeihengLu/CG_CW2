@@ -2,6 +2,7 @@
  * Camera.h
  *
  */
+#pragma 1
 
 #ifndef CAMERA_H_
 #define CAMERA_H_
@@ -69,7 +70,7 @@ protected:
 	
 
 };
-
+Vec3f arrayToVec(Value& arr);
 } //namespace rt
 
 

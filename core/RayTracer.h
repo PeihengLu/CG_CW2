@@ -4,6 +4,7 @@
  */
 #ifndef RAYTRACER_H_
 #define RAYTRACER_H_
+#pragma 1
 
 #include "math/geometry.h"
 #include "core/Camera.h"
@@ -22,14 +23,14 @@ public:
 	RayTracer();
 
 	static Vec3f* render(Camera* camera, Scene* scene, int nbounces);
-	static Vec3f* tonemap(Vec3f* pixelbuffer);
+	static Vec3f* tonemap(Vec3f* pixelbuffer, int width, int height);
 
 
 private:
-	std::tuple<bool, Vec3f> RayTracer::testIntersection(std::vector<Shape*> shapes);
-
+	
 };
 
+Ray getCameraRay(Camera* camera, int w, int h);
 
 
 

@@ -49,11 +49,11 @@ Shape* parseShape(Value& shapeSpecs) {
 	// TODO add support for triangle mesh
 
 	if (type.compare("sphere")==0) {
-		return ;
+		return parseSphere(shapeSpecs, material);
 	} else if (type.compare("plane")) {
-		return ;
+		return parsePlane(shapeSpecs, material);
 	} else if (type.compare("triangle")) {
-		return ;
+		return parseTriangle(shapeSpecs, material);
 	}
 }
 
@@ -70,6 +70,28 @@ Material* parseMaterial(Value& materialSpecs){
 	return new Material(ks, kd, kr, specularexponent, diffusecolor);
 }
 
+Sphere* parseSphere(Value& sphereSpecs, Material* material) {
+	Vec3f center = arrayToVec(sphereSpecs["center"]);
+	float radius = sphereSpecs["radius"].GetFloat();
+	return new Sphere(center, radius, material);
+}
+
+Triangle* parseTriangle(Value& triangleSpecs, Material* material){
+	Vec3f v0 = arrayToVec(triangleSpecs["v0"]);
+	Vec3f v1 = arrayToVec(triangleSpecs["v1"]);
+	Vec3f v2 = arrayToVec(triangleSpecs["v2"]);
+	Vec3f v3 = arrayToVec(triangleSpecs["v3"]);
+	return new Triangle(v0, v1, v2, material);
+}	
+
+Plane* parsePlane(Value& planeSpecs, Material* material){
+	Vec3f v0 = arrayToVec(planeSpecs["v0"]);
+	Vec3f v1 = arrayToVec(planeSpecs["v1"]);
+	Vec3f v2 = arrayToVec(planeSpecs["v2"]);
+	Vec3f v3 = arrayToVec(planeSpecs["v3"]);
+	return new Plane(v0, v1, v2, v3, material);
+}	
+
 // added a helper function for converting JSON array to Vec3f
 Vec3f arrayToVec(Value& arr){
     int i = 0;
@@ -83,11 +105,11 @@ Vec3f arrayToVec(Value& arr){
 }
 
 // testing the intersept with all 
-std::tuple<bool, Material*> Scene::testIntercept(Ray ray) {
+std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
 	// minimum distance to the ray origin
 	float minDistance = 100.0f;
 	bool intercepted;
-	Material* interceptionMat=nullptr;
+	Hit interception;
 	for (Shape* shape: this->shapes) {
 		std::tuple<bool, Hit> result = shape->intersect(ray);
 		if (std::get<0>(result)){
@@ -100,12 +122,20 @@ std::tuple<bool, Material*> Scene::testIntercept(Ray ray) {
 			Hit hit = std::get<1>(result);
 			if (minDistance > hit.distanceToOrigin) {
 				minDistance = hit.distanceToOrigin;
-				Vec3f color = hit.material.diffusecolor;
-				interceptionMat = &(hit.material);
+				interception = hit;
 			}
 		}
 	}
-	return std::make_tuple(intercepted, interceptionMat);
+	return std::make_tuple(intercepted, interception);
+}
+
+// getters
+Vec3f Scene::getBGColor(){
+	return this->backgroundColor;
+}
+
+std::vector<LightSource*> Scene::getLightSources(){
+	return this->lightSources;
 }
 
 } //namespace rt

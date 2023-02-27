@@ -2,7 +2,7 @@
  * Scene.h
  *
  */
-
+#pragma 1
 #ifndef SCENE_H_
 #define SCENE_H_
 
@@ -12,6 +12,9 @@
 
 #include "core/LightSource.h"
 #include "core/Shape.h"
+#include "shapes/Sphere.h"
+#include "shapes/Plane.h"
+#include "shapes/Triangle.h"
 
 
 using namespace rapidjson;
@@ -26,20 +29,24 @@ public:
 	Scene(){};
 
 	void createScene(Value& scenespecs);
-	std::tuple<bool, Material*> testIntercept(Ray ray);
+	std::tuple<bool, Hit> testIntercept(Ray ray);
+
+	Vec3f getBGColor();
+	std::vector<LightSource*> getLightSources();
 
 private:
 
 	std::vector<LightSource*> lightSources;
 	std::vector<Shape*> shapes;
 	Vec3f backgroundColor;
-
-	Material* parseMaterial(Value& materialSpecs);
-	LightSource* parseLightSourcce(Value& lightSpecs);
-	Shape* parseShape(Value& shapeSpecs);
-
 };
 
+Material* parseMaterial(Value& materialSpecs);
+LightSource* parseLightSourcce(Value& lightSpecs);
+Shape* parseShape(Value& shapeSpecs);
+Plane* parsePlane(Value& planeSpecs, Material* material);
+Triangle* parseTriangle(Value& triangleSpecs, Material* material);
+Sphere* parseSphere(Value& sphereSpecs, Material* material);
 } //namespace rt
 
 

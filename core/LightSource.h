@@ -2,6 +2,7 @@
  * LightSource.h
  *
  */
+#pragma 1
 
 #ifndef LIGHTSOURCE_H_
 #define LIGHTSOURCE_H_

@@ -3,31 +3,29 @@
  *
  *
  */
-
+#pragma 1
 #ifndef PLANE_H_
 #define PLANE_H_
 
-#include "math/geometry.h"
-#include "core/RayHitStructs.h"
 #include "core/Shape.h"
-#include "Scene.h"
 
 namespace rt{
 
-class Plane:public Shape{
+class Plane: public Shape{
 
 public:
     Vec3f const v1;
     Vec3f const v2;
     Vec3f const v3;
     Vec3f const v0;
-
+	Material* const material;
 
 	//
 	// Constructors
 	//
+	Plane():material(nullptr){};
 	Plane(Vec3f v0, Vec3f v1, Vec3f v2, Vec3f v3, Material * material);
-	Plane* parsePlane(Value& planeSpecs, Material* material);
+	
 
 	virtual ~Plane();
 
@@ -36,7 +34,6 @@ public:
 private:
 
 };
-
 
 
 } //namespace rt

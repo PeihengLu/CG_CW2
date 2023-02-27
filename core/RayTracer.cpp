@@ -27,7 +27,25 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 	for (int w = 0; w < camera->width; w++) {
 		for (int h = 0; h < camera->height; h++){
 			Ray cameraRay = getCameraRay(camera, w, h);
-			scene->testIntercept(cameraRay);
+			std::tuple<bool, Hit> result = scene->testIntercept(cameraRay);
+			if (std::get<0>(result)){
+				Hit hit = std::get<1>(result);
+				for (LightSource* light: scene->getLightSources()) {
+					Ray shadowRay;
+					shadowRay.origin = hit.point;
+					shadowRay.rayDirection = light->position - shadowRay.origin;
+					shadowRay.rayDirection = SHADOW;
+					std::tuple<bool, Hit> shadowResult = scene->testIntercept(shadowRay);
+					if (!std::get<0>(shadowResult)) {
+						continue;
+					} else {
+						// TODO add bling phong model
+						pixelbuffer[w + h * camera->width] = pixelbuffer[w + h * camera->width] + hit.material->diffusecolor;
+					}
+				}
+			} else {
+				pixelbuffer[w + h * camera->width] = scene->getBGColor();
+			}
 		}
 	}
 
@@ -63,10 +81,14 @@ Ray getCameraRay(Camera* camera, int w, int h){
  *
  * @return the tonemapped image
  */
-Vec3f* RayTracer::tonemap(Vec3f* pixelbuffer){
+Vec3f* RayTracer::tonemap(Vec3f* pixelbuffer, int width, int height){
 
 	//---------tonemapping function to be filled--------
-
+	for (int w = 0; w < width; w++) {
+		for (int h = 0; h < height; h++){
+			pixelbuffer[w + h * width] = pixelbuffer[w + h * width] * 255;
+		}
+	}
 
 
 
@@ -75,10 +97,6 @@ Vec3f* RayTracer::tonemap(Vec3f* pixelbuffer){
 
 }
 
-std::tuple<bool, Vec3f> RayTracer::testIntersection(std::vector<Shape*> shapes){
-	// TODO get all the Hit objects with the shapes and find the one closest to camera position
-
-}
 
 
 

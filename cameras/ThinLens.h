@@ -2,6 +2,7 @@
  * ThinLens.h
  *
  */
+#pragma 1
 
 #ifndef THINLENS_H_
 #define THINLENS_H_

@@ -8,13 +8,8 @@
 
 namespace rt{
 
-	Sphere::Sphere(Vec3f center, float radius, Material * material):center(center), radius(radius), Shape(material){};
+	Sphere::Sphere(Vec3f center, float radius, Material * material):center(center), radius(radius), material(material){};
 
-	Sphere* parseSphere(Value& sphereSpecs, Material* material) {
-		Vec3f center = arrayToVec(sphereSpecs["center"]);
-		float radius = sphereSpecs["radius"].GetFloat();
-		return new Sphere(center, radius, material);
-	}
 
 
 	/**

@@ -3,6 +3,7 @@
  *
  *
  */
+#pragma 1
 
 #ifndef PINHOLE_H_
 #define PINHOLE_H_

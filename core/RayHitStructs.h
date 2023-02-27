@@ -1,11 +1,12 @@
 /*
  * RayHitStructs.h
  */
+#pragma 1
 
 #ifndef CORE_RAYHITSTRUCTS_H_
 #define CORE_RAYHITSTRUCTS_H_
 
-#include "math/geometry.h"
+#include <core/Material.h>
 
 namespace rt{
 
@@ -30,7 +31,7 @@ struct Hit{
 	//----------Hit variables to be filled------
 	float distanceToOrigin;
 	// material of the interception point
-	Material material;
+	Material* material;
 };
 
 }

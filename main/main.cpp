@@ -49,6 +49,9 @@ int main(int argc, char* argv[]){
 	//
 	Vec3f* pixelbuffer=RayTracer::render(camera, scene, d["nbounces"].GetInt());
 
+	int height = camera->height;
+	int width = camera->width;
+
 
 
 	//free resources when rendering is finished
@@ -58,14 +61,14 @@ int main(int argc, char* argv[]){
 
 
 	//convert linear RGB pixel values [0-1] to range 0-255
-	RayTracer::tonemap(pixelbuffer);
+	RayTracer::tonemap(pixelbuffer, width, height);
 
 
 
 	std::printf("Output file: %s\n",outputFile);
 
 	//write rendered scene to file (pixels RGB values must be in range 0255)
-	PPMWriter::PPMWriter(camera->width, camera->height, pixelbuffer, outputFile);
+	PPMWriter::PPMWriter(width, height, pixelbuffer, outputFile);
 
 	delete pixelbuffer;
 }

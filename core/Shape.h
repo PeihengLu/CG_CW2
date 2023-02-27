@@ -2,7 +2,7 @@
  * Shape.h
  *
  */
-
+#pragma 1
 #ifndef SHAPE_H_
 #define SHAPE_H_
 
@@ -18,7 +18,6 @@ public:
 	// Constructors
 	//
 	Shape();
-	Shape(Material * mat): material(mat){};
 
 	//
 	// Destructor (must be overriden in subclass)
@@ -33,7 +32,6 @@ public:
 
 protected:
 
-	Material * material;
 
 };
 

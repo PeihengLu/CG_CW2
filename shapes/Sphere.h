@@ -3,14 +3,11 @@
  *
  *
  */
-
+#pragma 1
 #ifndef SPHERE_H_
 #define SPHERE_H_
 
-#include "math/geometry.h"
-#include "core/RayHitStructs.h"
 #include "core/Shape.h"
-#include "Scene.h"
 
 namespace rt{
 
@@ -19,13 +16,13 @@ class Sphere:public Shape{
 public:
 	Vec3f const center;
 	float const radius;
+	Material* const material;
 
 	//
 	// Constructors
 	//
+	Sphere():radius(0), material(nullptr){};
 	Sphere(Vec3f center, float radius, Material * material);
-
-	Sphere* parseSphere(Value& sphereSpecs);
 
 	virtual ~Sphere();
 
@@ -38,8 +35,6 @@ public:
 private:
 
 };
-
-
 
 } //namespace rt
 
