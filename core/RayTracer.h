@@ -26,7 +26,7 @@ public:
 
 
 private:
-
+	std::tuple<bool, Vec3f> RayTracer::testIntersection(std::vector<Shape*> shapes);
 
 };
 

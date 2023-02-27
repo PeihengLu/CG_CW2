@@ -137,6 +137,8 @@ public:
     }
 
     T x, y, z;
+
+
 };
 
 //[comment]
@@ -145,6 +147,7 @@ public:
 //[/comment]
 typedef Vec3<float> Vec3f;
 typedef Vec3<int> Vec3i;
+
 
 //[comment]
 // Implementation of a generic 4x4 Matrix class - Same thing here than with the Vec3 class. It uses

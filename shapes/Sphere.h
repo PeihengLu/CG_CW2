@@ -10,18 +10,22 @@
 #include "math/geometry.h"
 #include "core/RayHitStructs.h"
 #include "core/Shape.h"
+#include "Scene.h"
 
 namespace rt{
 
 class Sphere:public Shape{
 
 public:
+	Vec3f const center;
+	float const radius;
 
 	//
 	// Constructors
 	//
-	Sphere();
-	Sphere(Vec3f center, float radius):center(center), radius(radius){};
+	Sphere(Vec3f center, float radius, Material * material);
+
+	Sphere* parseSphere(Value& sphereSpecs);
 
 	virtual ~Sphere();
 
@@ -29,12 +33,9 @@ public:
 	//
 	// Functions that need to be implemented, since Sphere is a subclass of Shape
 	//
-	Hit intersect(Ray ray);
+	std::tuple<bool, Hit> intersect(Ray ray);
 
 private:
-
-	Vec3f center;
-	float radius;
 
 };
 

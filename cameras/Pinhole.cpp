@@ -12,14 +12,9 @@
 namespace rt{
 
 	//
-	// Pinhole constructor (example)
+	// Pinhole constructor 
 	//
-	Pinhole::Pinhole(int width, int height, int fov):Camera(width, height, fov){
-
-
-		// to fill
-
-	}
+	Pinhole::Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up):Camera(width, height, fov, position, lookat, up){}
 
 
 	/**

@@ -7,6 +7,7 @@
 #define CAMERA_H_
 
 #include "rapidjson/document.h"
+#include "math/geometry.h"
 
 
 using namespace rapidjson;
@@ -15,12 +16,20 @@ namespace rt{
 
 class Camera{
 public:
+	//
+	//camera members
+	//
+	int const height;
+	int const width;
+	int const fov; //field of view
+	Vec3f const position;
+	Vec3f const lookat;
+	Vec3f const up;	
 
 	//
 	// Constructors
 	//
-	Camera(){};
-	Camera(int height, int width, int fov):height(height), width(width), fov(fov){};
+	Camera(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up):height(height), width(width), fov(fov), position(position), lookat(lookat), up(up){};
 
 	//
 	// Destructor
@@ -46,47 +55,18 @@ public:
 	//
 
 
+	
 
 
 
 
 
-
-
-
-
-
-
-
-	//
-	// Getters and Setters
-	//
-	int getHeight() const {
-		return height;
-	}
-
-	void setHeight(int height) {
-		this->height = height;
-	}
-
-	int getWidth() const {
-		return width;
-	}
-
-	void setWidth(int width) {
-		this->width = width;
-	}
 
 
 
 protected:
 
-	//
-	//camera members
-	//
-	int height;
-	int width;
-	int fov; //field of view
+	
 
 };
 

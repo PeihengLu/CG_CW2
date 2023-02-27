@@ -19,6 +19,8 @@ struct Ray{
 	RayType raytype;
 
 	//----------Ray variables to be filled------
+	Vec3f rayDirection;
+	Vec3f origin;
 };
 
 
@@ -26,7 +28,9 @@ struct Hit{
 
 	Vec3f point; //point where ray hits a shape
 	//----------Hit variables to be filled------
-
+	float distanceToOrigin;
+	// material of the interception point
+	Material material;
 };
 
 }

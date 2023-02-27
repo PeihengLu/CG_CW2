@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
 	std::printf("Output file: %s\n",outputFile);
 
 	//write rendered scene to file (pixels RGB values must be in range 0255)
-	PPMWriter::PPMWriter(camera->getWidth(), camera->getHeight(), pixelbuffer, outputFile);
+	PPMWriter::PPMWriter(camera->width, camera->height, pixelbuffer, outputFile);
 
 	delete pixelbuffer;
 }

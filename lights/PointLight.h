@@ -13,8 +13,8 @@
 namespace rt{
 
 class PointLight: public LightSource{
-
-
+    public:
+    PointLight(Vec3f position, Vec3f is, Vec3f id);
 };
 
 

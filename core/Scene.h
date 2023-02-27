@@ -17,6 +17,8 @@
 using namespace rapidjson;
 
 namespace rt{
+Vec3f arrayToVec(Value& arr);
+
 
 class Scene {
 public:
@@ -24,12 +26,17 @@ public:
 	Scene(){};
 
 	void createScene(Value& scenespecs);
-
+	std::tuple<bool, Material*> testIntercept(Ray ray);
 
 private:
 
 	std::vector<LightSource*> lightSources;
 	std::vector<Shape*> shapes;
+	Vec3f backgroundColor;
+
+	Material* parseMaterial(Value& materialSpecs);
+	LightSource* parseLightSourcce(Value& lightSpecs);
+	Shape* parseShape(Value& shapeSpecs);
 
 };
 

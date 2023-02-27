@@ -18,6 +18,7 @@ public:
 	// Constructors
 	//
 	Shape();
+	Shape(Material * mat): material(mat){};
 
 	//
 	// Destructor (must be overriden in subclass)
@@ -27,7 +28,7 @@ public:
 	//
 	// Shape abstract methods (to be implemented by subclasses)
 	//
-	virtual Hit intersect(Ray)=0;
+	virtual std::tuple<bool, Hit> intersect(Ray)=0;
 
 
 protected:
