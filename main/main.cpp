@@ -27,6 +27,7 @@ int main(int argc, char* argv[]){
 	char* outputFile=argv[2];   //second command line argument holds the path to the output image file
 
 	std::printf("Input file: %s\n",inputFile);
+	std::printf("Output file: %s\n",outputFile);
 
 	//parse json input file using rapidjson
 	std::ifstream ifs(inputFile);
@@ -42,6 +43,7 @@ int main(int argc, char* argv[]){
 
 	//generate the scene according to the input file
 	Scene* scene=new Scene();
+	printf("Creating New Scene");
 	scene->createScene(d["scene"]);
 
 	//

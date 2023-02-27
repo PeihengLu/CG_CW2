@@ -23,11 +23,11 @@ public:
 	//
 	// Constructors
 	//
-	Plane():material(nullptr){};
+	Plane();
 	Plane(Vec3f v0, Vec3f v1, Vec3f v2, Vec3f v3, Material * material);
 	
 
-	virtual ~Plane();
+	~Plane();
 
 	std::tuple<bool, Hit> intersect(Ray ray);
 

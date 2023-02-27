@@ -17,7 +17,9 @@ void Scene::createScene(Value& scenespecs){
 
 	//----------parse json object to populate scene-----------
 	// initialize the scene with different shapes
+	printf("Start creating scene");
 	backgroundColor = arrayToVec(scenespecs["backgroundcolor"]);
+	printf("retrieved background colour");
 
 	for (Value& light: scenespecs["lightsources"].GetArray()) {
 		LightSource* l = parseLightSourcce(light);
@@ -37,7 +39,9 @@ LightSource* parseLightSourcce(Value& lightSpecs) {
 	Vec3f position = arrayToVec(lightSpecs["position"]);
 	Vec3f is = arrayToVec(lightSpecs["is"]);
 	Vec3f id = arrayToVec(lightSpecs["id"]);
-	return LightSource::createLightSource(lightType, position, is, id);
+
+	printf("Created light");
+	return createLightSource(lightType, position, is, id);
 }
 
 Shape* parseShape(Value& shapeSpecs) {

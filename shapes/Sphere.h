@@ -21,10 +21,10 @@ public:
 	//
 	// Constructors
 	//
-	Sphere():radius(0), material(nullptr){};
+	Sphere();
 	Sphere(Vec3f center, float radius, Material * material);
 
-	virtual ~Sphere();
+	~Sphere();
 
 
 	//

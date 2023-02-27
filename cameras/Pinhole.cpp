@@ -14,7 +14,9 @@ namespace rt{
 	//
 	// Pinhole constructor 
 	//
-	Pinhole::Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up):Camera(width, height, fov, position, lookat, up){}
+	Pinhole::Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up):Camera(width, height, fov, position, lookat, up){
+		printf("pinhole camera created\n");
+	}
 
 
 	/**
