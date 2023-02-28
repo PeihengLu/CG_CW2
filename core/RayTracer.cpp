@@ -31,18 +31,21 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 			std::tuple<bool, Hit> result = scene->testIntercept(cameraRay);
 			if (std::get<0>(result)){
 				Hit hit = std::get<1>(result);
-				// std::cout<<"interception point is: <"<<std::to_string(hit.point.x)<<"," <<std::to_string(hit.point.y) <<"," <<std::to_string(hit.point.z) << ">\n";
 				for (LightSource* light: scene->getLightSources()) {
 					Ray shadowRay;
 					shadowRay.origin = hit.point;
 					shadowRay.rayDirection = (light->position - shadowRay.origin).normalize();
-					shadowRay.rayDirection = SHADOW;
+					shadowRay.raytype = SHADOW;
 					std::tuple<bool, Hit> shadowResult = scene->testIntercept(shadowRay);
-					if (!std::get<0>(shadowResult)) { // if this point is in the shadow for this light source
+					if (false) { // if this point is in the shadow for this light source
 						continue;
 					} else {
 						Vec3f intensity = light->is;
 						intensity /= (hit.point - light->position).norm();
+						intensity.x = std::min(intensity.x, 1.0f);
+						intensity.y = std::min(intensity.y, 1.0f);
+						intensity.z = std::min(intensity.z, 1.0f);
+						// TODO intensity should have value < 1
 						// TODO add bling phong model
 						pixelbuffer[w + h * camera->width] = pixelbuffer[w + h * camera->width] + intensity * hit.material->diffusecolor;
 					}
@@ -69,12 +72,12 @@ Ray getCameraRay(Camera* camera, int w, int h){
 	float halfWidth = camera->width / 2.0f;
 	float halfHeight = camera->height / 2.0f;
 	// distance from the camera to the image plane
-	float distance = halfWidth / tan(camera->fov / 2.0f);
-	// calculate the right using lookat and up, useful for transforming pixel location
-	Vec3f right = (camera->lookat.crossProduct(camera->up)).normalize();
+	float distance = halfWidth / tan(fovRadians / 2.0f);
+
 	float imageX = ((2.0f * w) / camera->width - 1.0f) * halfWidth;
 	float imageY = (1.0f - (2.0f * h) / camera->height) * halfHeight;
-	Vec3f pixelLocation = camera->position + camera->lookat*distance + right*imageX + camera->up*imageY;
+	Vec3f pixelLocation = camera->position + camera->lookat*distance + camera->right*imageX + camera->up*imageY;
+	// std::cout<<"pixel location: <"<<std::to_string(pixelLocation.x)<<"," <<std::to_string(pixelLocation.y) <<"," <<std::to_string(pixelLocation.z) << ">\n";
 	cameraRay.rayDirection = (pixelLocation - cameraRay.origin).normalize();
 	return cameraRay;
 }
@@ -94,9 +97,6 @@ Vec3f* RayTracer::tonemap(Vec3f* pixelbuffer, int width, int height){
 			pixelbuffer[w + h * width] = pixelbuffer[w + h * width] * 255;
 		}
 	}
-
-
-
 
 	return pixelbuffer;
 

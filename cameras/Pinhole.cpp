@@ -26,6 +26,9 @@ namespace rt{
 	void Pinhole::printCamera(){
 		printf("I am a pinhole camera! \n");
 		printf("width: %dpx, height: %dpx, fov:%d \n", width, height, fov);
+		std::cout<<"camera position: <"<<std::to_string(this->position.x)<<"," <<std::to_string(this->position.y) <<"," <<std::to_string(this->position.z) << ">\n";
+		std::cout<<"camera looking at(normalized): <"<<std::to_string(this->lookat.x)<<"," <<std::to_string(this->lookat.y) <<"," <<std::to_string(this->lookat.z) << ">\n";
+		std::cout<<"camera up(normalized): <"<<std::to_string(this->up.x)<<"," <<std::to_string(this->up.y) <<"," <<std::to_string(this->up.z) << ">\n";
 	}
 
 

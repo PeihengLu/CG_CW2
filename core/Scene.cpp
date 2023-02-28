@@ -125,12 +125,11 @@ std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
 	for (Shape* shape: this->shapes) {
 		std::tuple<bool, Hit> result = shape->intersect(ray);
 		if (std::get<0>(result)){
-			printf("intercepted\n");
 			intercepted = true;
 			// only need to know if there is any inteception at all for shadow ray
 			// saving resources
 			if (ray.raytype==SHADOW) {
-				break;
+				std::make_tuple(true, interception);
 			}
 			Hit hit = std::get<1>(result);
 			if (minDistance > hit.distanceToOrigin) {

@@ -26,11 +26,12 @@ public:
 	Vec3f const position;
 	Vec3f const lookat;
 	Vec3f const up;	
+	Vec3f const right;
 
 	//
 	// Constructors
 	//
-	Camera(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up):height(height), width(width), fov(fov), position(position), lookat(lookat), up(up){};
+	Camera(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up);
 
 	//
 	// Destructor

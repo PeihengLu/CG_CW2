@@ -38,20 +38,23 @@ namespace rt{
 		}
 
 		// distance from sphere's center to the projection point
-		float distance = ((ray.origin + ray.rayDirection * projection) - this->center).norm();
+		float distance = (sphere_vector.crossProduct(ray.rayDirection)).norm() / ray.rayDirection.norm();
 		// std::cout<< "radius of sphere is: "<< std::to_string(this->radius) << std::endl;
 		// std::cout << "distance to center is: " << std::to_string(distance) <<std::endl;
-		if (distance > this->radius) {
+		if (distance >= this->radius) {
 			// printf("ray too far\n");
 			return std::make_tuple(false, h);
 		}
 		// calculate interception point using trigonometry 
-		Vec3f interception_point = ray.origin + ray.rayDirection * (projection - sqrt(pow(this->radius, 2) - pow(distance, 2)));
+		Vec3f interception_point = ray.origin + (ray.rayDirection).normalize() * (projection - sqrt(this->radius*this->radius - distance*distance));
 		h.distanceToOrigin = (interception_point - ray.origin).norm();
+
+		// if (h.distanceToOrigin < 0.02 && ray.raytype == SHADOW) {
+		// 	return std::make_tuple(false, h);
+		// }
 		// TODO update this for texture mapping
 		h.material = this->material;
 		h.point = interception_point;
-		printf("hit");
 
 		return std::make_tuple(true, h);
 	}

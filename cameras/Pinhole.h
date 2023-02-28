@@ -14,6 +14,7 @@ namespace rt{
 
 class Pinhole:public Camera{
 public:
+	
 
 	//
 	// Constructors
