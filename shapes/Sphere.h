@@ -16,7 +16,7 @@ class Sphere:public Shape{
 public:
 	Vec3f const center;
 	float const radius;
-	Material* const material;
+	// texture related
 
 	//
 	// Constructors
@@ -26,6 +26,7 @@ public:
 
 	~Sphere();
 
+	Vec3f getTexture(Vec3f intersection);
 
 	//
 	// Functions that need to be implemented, since Sphere is a subclass of Shape

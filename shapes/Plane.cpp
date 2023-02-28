@@ -7,8 +7,8 @@
 
 
 namespace rt{
-	Plane::Plane():material(nullptr){};
-	Plane::Plane(Vec3f v0, Vec3f v1, Vec3f v2, Vec3f v3, Material * material):v0(v0), v1(v1), v2(v2), v3(v3), material(material), normal(((this->v0 - this->v1).crossProduct(this->v2 - this->v1)).normalize()){}
+	Plane::Plane():Shape(nullptr, "Plane"){};
+	Plane::Plane(Vec3f v0, Vec3f v1, Vec3f v2, Vec3f v3, Material * material):v0(v0), v1(v1), v2(v2), v3(v3), normal(((this->v0 - this->v1).crossProduct(this->v2 - this->v1)).normalize()), Shape(material, "Plane"){}
 
 	Plane::~Plane(){}
 
@@ -68,7 +68,7 @@ namespace rt{
 			float distance = (intersection - ray.origin).norm();
 			h.distanceToOrigin = distance;
 		 	// TODO update for texture mapping
-		 	h.material = this->material;
+		 	h.shape = this;
 			h.normal = this->normal;
 
 			return std::make_tuple(true, h);

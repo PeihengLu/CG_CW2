@@ -34,12 +34,12 @@ namespace rt{
         Vec3f diffuse = this->diffusecolor * std::max(hitToLight.dotProduct(hit.normal), 0.0f) * id * this->kd;
         color = color + diffuse;
 
-        Vec3f specular = is * pow(std::max((hitToCamera + hitToLight).normalize().dotProduct(hit.normal), 0.0f), specularexponent) * this->ks;
+        Vec3f specular = is * pow(std::max((hitToCamera + hitToLight).normalize().dotProduct(hit.normal), 0.0f), this->specularexponent) * this->ks;
         color = color + specular;
 
-        if (hit.material->kr > 0) {
+        if (hit.shape->material->kr > 0) {
             Vec3f reflectionColor = reflect(-hitToCamera, scene, camera, hit, nbounce - 1);
-            color = color + hit.material->kr * reflectionColor;
+            color = color + hit.shape->material->kr * reflectionColor;
         } 
 
         color.x = std::min(color.x, 1.0f);
@@ -93,7 +93,7 @@ Vec3f reflect(Vec3f in, Scene* scene, Camera* camera, Hit prevHit, const int nbo
 		color = color + getColorFromLight(hit, light, scene, camera, nbounce);
 	}
 
-	return color * prevHit.material->kr;
+	return color * prevHit.shape->material->kr;
 }
 
 Vec3f getColorFromLight(Hit hit, LightSource* light, Scene* scene, Camera* camera, const int nbounce){
@@ -108,7 +108,7 @@ Vec3f getColorFromLight(Hit hit, LightSource* light, Scene* scene, Camera* camer
 		color = Vec3f(0, 0, 0);
 	} else {
 		// TODO texture needs to be handled later
-		BlinnPhong* shading = new BlinnPhong(hit.material);
+		BlinnPhong* shading = new BlinnPhong(hit.shape->material);
 		color = color  + shading->getColor(scene, light, camera, hit, nbounce);
 		delete shading;
 	}

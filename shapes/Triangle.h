@@ -18,10 +18,11 @@ class Triangle: public Shape{
     Vec3f const v1;
     Vec3f const v2;
     Vec3f const v0;
-    Material* const material;
 
     Triangle();
     Triangle(Vec3f v0, Vec3f v1, Vec3f v2, Material * material);
+
+    Vec3f getTexture(Vec3f intersection);
 
     ~Triangle();
     

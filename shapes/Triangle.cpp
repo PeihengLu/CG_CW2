@@ -8,8 +8,8 @@
 
 
 namespace rt{
-	Triangle::Triangle():material(nullptr){};
-	Triangle::Triangle(Vec3f v0, Vec3f v1, Vec3f v2, Material * material):v0(v0), v1(v1), v2(v2), material(material){};
+	Triangle::Triangle():Shape(nullptr, "Triangle"){};
+	Triangle::Triangle(Vec3f v0, Vec3f v1, Vec3f v2, Material * material):v0(v0), v1(v1), v2(v2), Shape(material, "Triangle"){};
 
 	Triangle::~Triangle(){
 		delete this->material;
@@ -54,7 +54,7 @@ namespace rt{
 			float distance = (intersection - ray.origin).norm();
 			h.distanceToOrigin = distance;
 		// 	// TODO update for texture mapping
-		 	h.material = this->material;
+		 	h.shape = this;
 			h.normal = normal;
 
 			return std::make_tuple(true, h);

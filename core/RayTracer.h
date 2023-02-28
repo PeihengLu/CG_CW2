@@ -9,7 +9,9 @@
 #include "math/geometry.h"
 #include "core/Camera.h"
 #include "core/Scene.h"
+#include "core/Shape.h"
 #include "materials/BlinnPhong.h"
+#include "core/RayHitStructs.h"
 
 namespace rt{
 

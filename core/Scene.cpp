@@ -135,10 +135,7 @@ std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
 			Hit hit = std::get<1>(result);
 			if (minDistance > hit.distanceToOrigin) {
 				minDistance = hit.distanceToOrigin;
-				interception.distanceToOrigin = hit.distanceToOrigin;
-				interception.material = hit.material;
-				interception.point = hit.point;
-				interception.normal = hit.normal;
+				interception = hit;
 			}
 		}
 	}

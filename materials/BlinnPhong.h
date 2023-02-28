@@ -10,6 +10,8 @@
 #include "core/Material.h"
 #include "core/Scene.h"
 #include "core/Camera.h"
+#include "core/Shape.h"
+#include "core/RayHitStructs.h"
 
 
 namespace rt{

@@ -3,7 +3,6 @@
  *
  */
 #include "RayTracer.h"
-#include "RayHitStructs.h"
 
 namespace rt{
 
@@ -89,7 +88,6 @@ Vec3f* RayTracer::tonemap(Vec3f* pixelbuffer, int width, int height){
 	}
 
 	return pixelbuffer;
-
 }
 
 

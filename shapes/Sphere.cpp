@@ -8,8 +8,8 @@
 
 namespace rt{
 
-	Sphere::Sphere():radius(0), material(nullptr){};
-	Sphere::Sphere(Vec3f center, float radius, Material * material):center(center), radius(radius), material(material){};
+	Sphere::Sphere():radius(0), Shape(nullptr, "Sphere"){};
+	Sphere::Sphere(Vec3f center, float radius, Material * material):center(center), radius(radius), Shape(material, "Sphere"){};
 
 	Sphere::~Sphere(){
 		delete this->material;
@@ -54,14 +54,16 @@ namespace rt{
 		// 	return std::make_tuple(false, h);
 		// }
 		// TODO update this for texture mapping
-		h.material = this->material;
+		h.shape = this;
 		h.point = interception_point;
 		h.normal = (h.point - this->center).normalize();
 
 		return std::make_tuple(true, h);
 	}
 
+	Vec3f Sphere::getTexture(Vec3f intersection) {
 
+	}
 
 } //namespace rt
 

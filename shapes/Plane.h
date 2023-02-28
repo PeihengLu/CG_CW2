@@ -18,7 +18,6 @@ public:
     Vec3f const v2;
     Vec3f const v3;
     Vec3f const v0;
-	Material* const material;
 	Vec3f const normal;
 
 	//
@@ -26,8 +25,9 @@ public:
 	//
 	Plane();
 	Plane(Vec3f v0, Vec3f v1, Vec3f v2, Vec3f v3, Material * material);
-	
 
+	Vec3f getTexture(Vec3f intersection);
+	
 	~Plane();
 
 	std::tuple<bool, Hit> intersect(Ray ray);
