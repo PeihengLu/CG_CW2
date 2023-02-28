@@ -8,21 +8,14 @@
 
 namespace rt{
 	Plane::Plane():material(nullptr){};
-	Plane::Plane(Vec3f v0, Vec3f v1, Vec3f v2, Vec3f v3, Material * material):v0(v0), v1(v1), v2(v2), v3(v3), material(material),normal(((v1 - v0).crossProduct(v2 - v1)).normalize()){
-		std::cout<<"normal of the plane is: <"<<std::to_string(normal.x)<<"," <<std::to_string(normal.y) <<"," <<std::to_string(normal.z) << ">\n";
-	}
+	Plane::Plane(Vec3f v0, Vec3f v1, Vec3f v2, Vec3f v3, Material * material):v0(v0), v1(v1), v2(v2), v3(v3), material(material){}
 
-	Plane::~Plane(){
-		delete this->material;
-		delete &(this->v0);
-		delete &(this->v1);
-		delete &(this->v2);
-		delete &(this->v3);
-	}
+	Plane::~Plane(){}
 
 
 	/**
 	 * Computes whether a ray hit the specific instance of a plane and returns the hit data
+	 * A square is simply two triangles pieced
 	 *
 	 * @param ray cast ray to check for intersection with shape
 	 *
@@ -30,41 +23,59 @@ namespace rt{
 	 *
 	 */
 	std::tuple<bool, Hit> Plane::intersect(Ray ray){
-        // whether there is a hit or not
-        bool hit;
 		Hit h;
-		//-----------to be implemented -------------
-		// check if the ray and the plane is parallel
-		if (std::abs(ray.rayDirection.dotProduct(this->normal)) < 0.0001f) {
+
+		Vec3f normal = (this->v1 - this->v0).crossProduct(this->v3 - this->v0);
+
+		// distance from ray origin to plane
+		float distance = ray.rayDirection.dotProduct(normal);
+		if (std::abs(distance) < 0.0001f) {
 			return std::make_tuple(false, h);
 		}
 
-		// check if the ray is poiting towards another direction
-		float distance = (ray.origin - this->v0).dotProduct(this->normal) / std::abs(ray.rayDirection.dotProduct(this->normal));
-		if (distance < 0) {
-			return std::make_tuple(false, h);
-		}
-
-		// printf("check range\n");
-
-		Vec3f intersection = ray.origin + ray.rayDirection * distance;
-		// check if the intersection point is within bounds
-		if ((intersection - this->v0).dotProduct(intersection - this->v2) > 0) 
-			return std::make_tuple(false, h);
+		// how much the ray should be extended or shrinked to reach the plane
+		float length = std::abs((this->v0 - ray.origin).dotProduct(normal) / distance);
 		
-		hit = true;
-		h.point = intersection;
-		h.distanceToOrigin = (intersection - ray.origin).norm();
-		// TODO update for texture
-		h.material = this->material;
+		Vec3f intersection = ray.origin + length * ray.rayDirection;
 
-		std::cout<<"distance from intersection point to plane is :" << (intersection - this->v0).dotProduct(this->normal)<<std::endl;
-		std::cout<<"intersection point is: <"<<std::to_string(intersection.x)<<"," <<std::to_string(intersection.y) <<"," <<std::to_string(intersection.z) << ">\n";
+		// check if the intersection is actually on the plane(the camera ray is pointing towards the correc direction)
+		if (std::abs((intersection - this->v0).dotProduct(normal)) > 0.0001f) {
+			return std::make_tuple(false, h);
+		}
 
-		printf("intersected with a plane\n");
 
-		return std::make_tuple(hit, h);
+		// if the ray's origin is on the plane, it will not intersect the plane
+		if ((intersection - ray.origin).norm() < 0.0001f && ray.raytype == SHADOW) {
+			return std::make_tuple(false, h);
+		}
 
+		Vec3f edge0 = this->v1 - this->v0;
+		Vec3f point_to_v0 = intersection - this->v0;
+		Vec3f edge1 = this->v2 - this->v1;
+		Vec3f point_to_v1 = intersection - this->v1;
+		Vec3f edge2 = this->v3 - this->v2;
+		Vec3f point_to_v2 = intersection - this->v2;
+		Vec3f edge3 = this->v0 - this->v3;
+		Vec3f point_to_v3 = intersection - this->v3;
+		bool point_in_square =  (point_to_v0).dotProduct(edge0) >= 0;
+		point_in_square =  point_in_square && (point_to_v1).dotProduct(edge1) >= 0;
+		point_in_square =  point_in_square && (point_to_v2).dotProduct(edge2) >= 0;
+		point_in_square =  point_in_square && (point_to_v3).dotProduct(edge3) >= 0;
+		// don't need to check the rest since it's rectangle
+
+		if (point_in_square) {
+			if (ray.raytype == SHADOW) {
+				return std::make_tuple(true, h);
+			}
+			h.point = intersection;
+			h.distanceToOrigin = (intersection - ray.origin).norm();
+			// TODO update for texture mapping
+			h.material = this->material;
+
+			return std::make_tuple(true, h);
+		} else {
+			return std::make_tuple(false, h);
+		}
 	}
 
 

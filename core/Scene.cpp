@@ -129,12 +129,14 @@ std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
 			// only need to know if there is any inteception at all for shadow ray
 			// saving resources
 			if (ray.raytype==SHADOW) {
-				std::make_tuple(true, interception);
+				return std::make_tuple(true, interception);
 			}
 			Hit hit = std::get<1>(result);
 			if (minDistance > hit.distanceToOrigin) {
 				minDistance = hit.distanceToOrigin;
-				interception = hit;
+				interception.distanceToOrigin = hit.distanceToOrigin;
+				interception.material = hit.material;
+				interception.point = hit.point;
 			}
 		}
 	}

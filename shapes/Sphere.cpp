@@ -48,6 +48,7 @@ namespace rt{
 		// calculate interception point using trigonometry 
 		Vec3f interception_point = ray.origin + (ray.rayDirection).normalize() * (projection - sqrt(this->radius*this->radius - distance*distance));
 		h.distanceToOrigin = (interception_point - ray.origin).norm();
+		// std::cout<<"sphere primary ray distance to origin is : " << std::to_string(h.distanceToOrigin) << std::endl;
 
 		// if (h.distanceToOrigin < 0.02 && ray.raytype == SHADOW) {
 		// 	return std::make_tuple(false, h);
