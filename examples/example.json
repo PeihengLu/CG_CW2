@@ -43,8 +43,8 @@
         "v0": [2.0, 8.0, 0.0],
         "material":{
             "ks": 0.6,
-            "kd": 0.7,
-            "kr": 0.3,
+            "kd": 0.5,
+            "kr": 0.5,
             "specularexponent": 10,
             "diffusecolor": [1.0, 1.0, 1.0]
         }
@@ -58,8 +58,8 @@
         "v2": [2.0, 0.0, 0.0],
         "material": {
             "ks": 0.6,
-            "kd": 0.7,
-            "kr": 0.3,
+            "kd": 0.5,
+            "kr": 0.5,
             "specularexponent": 10,
             "diffusecolor": [1.0, 1.0, 1.0],
             "tPath": "../textures/sicily.jpg",

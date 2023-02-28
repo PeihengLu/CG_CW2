@@ -119,7 +119,8 @@ Vec3f arrayToVec(Value& arr){
 // testing the intersept with all 
 std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
 	// minimum distance to the ray origin
-	float minDistance = 100.0f;
+	// TODO change this to -1 and make some more changes to function utilizing this
+	float minDistance = 1000000.0f;
 	bool intercepted = false;
 	Hit interception;
 	for (Shape* shape: this->shapes) {
@@ -137,6 +138,7 @@ std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
 				interception.distanceToOrigin = hit.distanceToOrigin;
 				interception.material = hit.material;
 				interception.point = hit.point;
+				interception.normal = hit.normal;
 			}
 		}
 	}

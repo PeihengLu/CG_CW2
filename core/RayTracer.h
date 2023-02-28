@@ -9,6 +9,7 @@
 #include "math/geometry.h"
 #include "core/Camera.h"
 #include "core/Scene.h"
+#include "materials/BlinnPhong.h"
 
 namespace rt{
 
@@ -31,8 +32,6 @@ private:
 };
 
 Ray getCameraRay(Camera* camera, int w, int h);
-
-
 
 } //namespace rt
 

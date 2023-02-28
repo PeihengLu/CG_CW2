@@ -31,7 +31,7 @@ class Triangle: public Shape{
 
 };
 
-
+bool isPointInTriangle(Vec3f P, Vec3f A, Vec3f B, Vec3f C);
 
 
 } //namespace rt

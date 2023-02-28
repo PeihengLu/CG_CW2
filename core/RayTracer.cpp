@@ -21,13 +21,6 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 
 	Vec3f* pixelbuffer=new Vec3f[camera->width*camera->height];
 
-	for (int w = 0; w < camera->width; w++) {
-		for (int h = 0; h < camera->height; h++){
-			pixelbuffer[w + h * camera->width] = *(new Vec3f(0, 0, 0));
-		}
-	}
-	printf("initialization complete\n");
-
 	//----------main rendering function to be filled------
 
 	// rendering the scene
@@ -39,26 +32,14 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 			bool cameraHit = std::get<0>(result);
 			if (cameraHit){
 				Hit hit = std::get<1>(result);
-				for (LightSource* light: scene->getLightSources()) {
-					Ray shadowRay;
-					shadowRay.origin = hit.point;
-					shadowRay.rayDirection = (light->position - hit.point).normalize();
-					shadowRay.raytype = SHADOW;
-					std::tuple<bool, Hit> shadowResult = scene->testIntercept(shadowRay);
-					bool shadowHit = std::get<0>(shadowResult);
-					if (shadowHit) { // if this point is in the shadow for this light source
-						continue;
-					} else {
-						Vec3f intensity = light->is;
 
-						intensity /= (hit.point - light->position).norm();
-						intensity.x = std::min(intensity.x, 1.0f);
-						intensity.y = std::min(intensity.y, 1.0f);
-						intensity.z = std::min(intensity.z, 1.0f);
-						// TODO add bling phong model
-						pixelbuffer[w + h * camera->height] = pixelbuffer[w + h * camera->height] + hit.material->diffusecolor;
-					}
+				for (LightSource* light: scene->getLightSources()) {
+					pixelbuffer[w + h * camera->height] = pixelbuffer[w + h * camera->height] + getColorFromLight(hit, light, scene, camera, 3);
 				}
+
+				pixelbuffer[w + h * camera->height].x = std::min(pixelbuffer[w + h * camera->height].x, 1.0f);
+        		pixelbuffer[w + h * camera->height].y = std::min(pixelbuffer[w + h * camera->height].y, 1.0f);
+        		pixelbuffer[w + h * camera->height].z = std::min(pixelbuffer[w + h * camera->height].z, 1.0f);
 			} else {
 				pixelbuffer[w + h * camera->width] = scene->getBGColor();
 			}
@@ -82,10 +63,10 @@ Ray getCameraRay(Camera* camera, int w, int h){
 	float halfHeight = camera->height / 2.0f;
 	// distance from the camera to the image plane
 	float distance = halfWidth / tan(fovRadians / 2.0f);
-
-	float imageX = ((2.0f * w) / camera->width - 1.0f) * halfWidth;
-	float imageY = (1.0f - (2.0f * h) / camera->height) * halfHeight;
+	float imageX = ((2.0f * (w+0.5)) / camera->width - 1.0f) * halfWidth;
+	float imageY = (1.0f - (2.0f * (h+0.5)) / camera->height) * halfHeight;
 	Vec3f pixelLocation = camera->position + camera->lookat*distance + camera->right*imageX + camera->up*imageY;
+	// std::cout<<std::to_string(camera->lookat.norm())<<std::endl;
 	// std::cout<<"pixel location: <"<<std::to_string(pixelLocation.x)<<"," <<std::to_string(pixelLocation.y) <<"," <<std::to_string(pixelLocation.z) << ">\n";
 	cameraRay.rayDirection = (pixelLocation - cameraRay.origin).normalize();
 	return cameraRay;

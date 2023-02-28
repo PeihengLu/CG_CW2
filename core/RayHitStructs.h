@@ -32,6 +32,8 @@ struct Hit{
 	float distanceToOrigin;
 	// material of the interception point
 	Material* material;
+	// surface normal of point of intersection
+	Vec3f normal;
 };
 
 }

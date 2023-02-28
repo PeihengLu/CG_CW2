@@ -19,6 +19,7 @@ public:
     Vec3f const v3;
     Vec3f const v0;
 	Material* const material;
+	Vec3f const normal;
 
 	//
 	// Constructors
