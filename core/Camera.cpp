@@ -14,6 +14,16 @@ namespace rt{
 
 	Camera::~Camera(){};
 
+	// to be overwritten
+	Ray Camera::getCameraRay(int w, int h) {
+		Ray ray;
+		return ray;
+	}
+
+	std::vector<Ray> Camera::getCameraRaySamples(int w, int h) {
+		return std::vector<Ray>{this->getCameraRay(w, h)};
+	}
+
 
 
 /**
@@ -24,7 +34,7 @@ namespace rt{
  * @return camera subclass instance
  *
  */
-Camera* Camera::createCamera(Value& cameraSpecs){
+Camera* Camera::createCamera(Value& cameraSpecs, int sampleNum){
 
 	//check if cameratype is defined
 
@@ -45,12 +55,15 @@ Camera* Camera::createCamera(Value& cameraSpecs){
 				arrayToVec(cameraSpecs["up"]).normalize());
 
 	}else if (cameraType.compare("thinlens")==0){
-		return new Pinhole(cameraSpecs["width"].GetInt(),
+		return new ThinLens(cameraSpecs["width"].GetInt(),
 				cameraSpecs["height"].GetInt(),
 				cameraSpecs["fov"].GetInt(),
 				arrayToVec(cameraSpecs["position"]),
 				arrayToVec(cameraSpecs["lookat"]),
-				arrayToVec(cameraSpecs["up"]));
+				arrayToVec(cameraSpecs["up"]),
+				cameraSpecs["lensRadius"].GetFloat(),
+				cameraSpecs["focalDistance"].GetFloat(),
+				sampleNum);
 	}
 
 	return 0;

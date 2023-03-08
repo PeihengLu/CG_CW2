@@ -2,7 +2,6 @@
  * Scene.h
  *
  */
-#pragma 1
 #ifndef SCENE_H_
 #define SCENE_H_
 
@@ -10,8 +9,11 @@
 
 #include "rapidjson/document.h"
 
+
+
 #include "core/LightSource.h"
 #include "core/Shape.h"
+#include "shapes/BVH.h"
 #include "shapes/Sphere.h"
 #include "shapes/Plane.h"
 #include "shapes/Triangle.h"
@@ -29,7 +31,7 @@ public:
 	Scene(){};
 
 	void createScene(Value& scenespecs);
-	std::tuple<bool, Hit> testIntercept(Ray ray);
+	std::tuple<bool, Hit, Shape*> testIntercept(Ray ray);
 
 	Vec3f getBGColor();
 	std::vector<LightSource*> getLightSources();
@@ -39,6 +41,7 @@ private:
 	std::vector<LightSource*> lightSources;
 	std::vector<Shape*> shapes;
 	Vec3f backgroundColor;
+	BVH* bvh_root;
 };
 
 Material* parseMaterial(Value& materialSpecs);

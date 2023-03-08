@@ -8,8 +8,10 @@
 
 
 namespace rt{
-	Triangle::Triangle():Shape(nullptr, "Triangle"){};
-	Triangle::Triangle(Vec3f v0, Vec3f v1, Vec3f v2, Material * material):v0(v0), v1(v1), v2(v2), Shape(material, "Triangle"){};
+	Triangle::Triangle():Shape(nullptr, TRIANGLE){calculateBoundingBox();}
+	Triangle::Triangle(Vec3f v0, Vec3f v1, Vec3f v2, Material * material):v0(v0), v1(v1), v2(v2), Shape(material, TRIANGLE){calculateBoundingBox();}
+	Triangle::Triangle(Vec3f v0, Vec3f v1, Vec3f v2, Material * material, int const texture_width, int const texture_height, Vec3f* textures):v0(v0), v1(v1), v2(v2), Shape(material, TRIANGLE, texture_width, texture_height, textures){calculateBoundingBox();}
+	
 
 	Triangle::~Triangle(){
 		delete this->material;
@@ -20,6 +22,10 @@ namespace rt{
 
     std::tuple<bool, Hit> Triangle::intersect(Ray ray){
 		Hit h;
+
+		if (!this->bbox->intersect(ray.origin, ray.rayDirection)) {
+			return std::make_tuple(false, h);
+		}
 
 		Vec3f normal = ((this->v1 - this->v0).crossProduct(this->v2 - this->v0)).normalize();
 
@@ -40,7 +46,7 @@ namespace rt{
 		}
 
 		// if the ray's origin is on the plane, it will not intersect the plane
-		if ((intersection - ray.origin).norm() < 0.001f && ray.raytype == SHADOW) {
+		if ((intersection - ray.origin).length() < 0.001f && ray.raytype == SHADOW) {
 			return std::make_tuple(false, h);
 		}
 
@@ -51,10 +57,9 @@ namespace rt{
 				return std::make_tuple(true, h);
 			}
 			h.point = intersection;
-			float distance = (intersection - ray.origin).norm();
+			float distance = (intersection - ray.origin).length();
 			h.distanceToOrigin = distance;
 		// 	// TODO update for texture mapping
-		 	h.shape = this;
 			h.normal = normal;
 
 			return std::make_tuple(true, h);
@@ -76,6 +81,25 @@ namespace rt{
 		float u = (dotACAC * dotABAP - dotABAC * dotACAP) / denominator;
 		float v = (dotABAB * dotACAP - dotABAC * dotABAP) / denominator;
 		return u >= 0 && v >= 0 && u + v <= 1;
+	}
+
+	Vec3f Triangle::getTexture(Vec3f intersection) {
+		return Vec3f(0, 0, 0);
+	}
+
+	// TODO to be overwritten
+    BoundingBox* Triangle::getBoundingBox() {
+        return bbox;
+    }
+
+	void Triangle::calculateBoundingBox() {
+		Vec3f bbox_min = Vec3f(std::min(std::min(v1.x, v2.x), v0.x),
+                         std::min(std::min(v1.y, v2.y), v0.y),
+                         std::min(std::min(v1.z, v2.z), v0.z));
+        Vec3f bbox_max = Vec3f(std::max(std::max(v1.x, v2.x), v0.x),
+                         std::max(std::max(v1.y, v2.y), v0.y),
+                         std::max(std::max(v1.z, v2.z), v0.z));
+        bbox = new BoundingBox(bbox_min, bbox_max);
 	}
 
 

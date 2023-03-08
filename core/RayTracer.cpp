@@ -25,22 +25,52 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 	// rendering the scene
 	for (int w = 0; w < camera->width; w++) {
 		for (int h = 0; h < camera->height; h++){
-			Ray cameraRay = getCameraRay(camera, w, h);
-			// std::cout<<"camera ray direction: <"<<std::to_string(cameraRay.rayDirection.x)<<"," <<std::to_string(cameraRay.rayDirection.y) <<"," <<std::to_string(cameraRay.rayDirection.z) << ">\n";
-			std::tuple<bool, Hit> result = scene->testIntercept(cameraRay);
-			bool cameraHit = std::get<0>(result);
-			if (cameraHit){
-				Hit hit = std::get<1>(result);
+			if (camera->type == PINHOLE) {
+				Ray cameraRay = camera->getCameraRay(w, h);
+				// std::cout<<"camera ray direction: <"<<std::to_string(cameraRay.rayDirection.x)<<"," <<std::to_string(cameraRay.rayDirection.y) <<"," <<std::to_string(cameraRay.rayDirection.z) << ">\n";
+				std::tuple<bool, Hit, Shape*> result = scene->testIntercept(cameraRay);
+				bool cameraHit = std::get<0>(result);
+				if (cameraHit){
+					Hit hit = std::get<1>(result);
+					Shape* shape = std::get<2>(result);
 
-				for (LightSource* light: scene->getLightSources()) {
-					pixelbuffer[w + h * camera->height] = pixelbuffer[w + h * camera->height] + getColorFromLight(hit, light, scene, camera, 3);
+					for (LightSource* light: scene->getLightSources()) {
+						pixelbuffer[w + h * camera->width] = pixelbuffer[w + h * camera->width] + getColorFromLight(hit, shape, light, scene, cameraRay.origin, 2);
+					}
+
+					pixelbuffer[w + h * camera->width].x = std::min(pixelbuffer[w + h * camera->width].x, 1.0f);
+					pixelbuffer[w + h * camera->width].y = std::min(pixelbuffer[w + h * camera->width].y, 1.0f);
+					pixelbuffer[w + h * camera->width].z = std::min(pixelbuffer[w + h * camera->width].z, 1.0f);
+				} else {
+					pixelbuffer[w + h * camera->width] = scene->getBGColor();
 				}
+			} else if (camera->type == THINLENS) {
+				std::vector<Ray> rays = camera->getCameraRaySamples(w, h);
+				int sampleNum = rays.size();
 
-				pixelbuffer[w + h * camera->height].x = std::min(pixelbuffer[w + h * camera->height].x, 1.0f);
-        		pixelbuffer[w + h * camera->height].y = std::min(pixelbuffer[w + h * camera->height].y, 1.0f);
-        		pixelbuffer[w + h * camera->height].z = std::min(pixelbuffer[w + h * camera->height].z, 1.0f);
-			} else {
-				pixelbuffer[w + h * camera->width] = scene->getBGColor();
+				for (Ray cameraRay: rays) {
+					Vec3f c = Vec3f();
+					std::tuple<bool, Hit, Shape*> result = scene->testIntercept(cameraRay);
+					bool cameraHit = std::get<0>(result);
+					
+					if (cameraHit){
+						Hit hit = std::get<1>(result);
+						Shape* shape = std::get<2>(result);
+
+						for (LightSource* light: scene->getLightSources()) {
+							c = c + getColorFromLight(hit, shape, light, scene, cameraRay.origin, 2);
+						}
+
+
+						c.x = std::min(c.x, 1.0f);
+						c.y = std::min(c.y, 1.0f);
+						c.z = std::min(c.z, 1.0f);
+					} else {
+						c = scene->getBGColor();
+					}
+					c /= sampleNum;
+					pixelbuffer[w + h * camera->width] = pixelbuffer[w + h * camera->width] + c;
+				}
 			}
 		}
 	}
@@ -50,26 +80,6 @@ Vec3f* RayTracer::render(Camera* camera, Scene* scene, int nbounces){
 	return pixelbuffer;
 }
 
-// TODO camera ray could be wrong
-Ray getCameraRay(Camera* camera, int w, int h){
-	// defining the camera primary ray from the camera position to the pixel position
-	Ray cameraRay;
-	cameraRay.raytype = PRIMARY;
-	cameraRay.origin = camera->position;
-	float fovRadians = camera->fov * M_PI / 180.0f;
-	// half of the width and height of camera plane, make working with tan easier
-	float halfWidth = camera->width / 2.0f;
-	float halfHeight = camera->height / 2.0f;
-	// distance from the camera to the image plane
-	float distance = halfWidth / tan(fovRadians / 2.0f);
-	float imageX = ((2.0f * (w+0.5)) / camera->width - 1.0f) * halfWidth;
-	float imageY = (1.0f - (2.0f * (h+0.5)) / camera->height) * halfHeight;
-	Vec3f pixelLocation = camera->position + camera->lookat*distance + camera->right*imageX + camera->up*imageY;
-	// std::cout<<std::to_string(camera->lookat.norm())<<std::endl;
-	// std::cout<<"pixel location: <"<<std::to_string(pixelLocation.x)<<"," <<std::to_string(pixelLocation.y) <<"," <<std::to_string(pixelLocation.z) << ">\n";
-	cameraRay.rayDirection = (pixelLocation - cameraRay.origin).normalize();
-	return cameraRay;
-}
 
 /**
  * Tonemaps the rendered image (conversion of linear RGB values [0-1] to low dynamic range [0-255]

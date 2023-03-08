@@ -3,7 +3,6 @@
  *
  *
  */
-#pragma 1
 #ifndef SPHERE_H_
 #define SPHERE_H_
 
@@ -23,10 +22,14 @@ public:
 	//
 	Sphere();
 	Sphere(Vec3f center, float radius, Material * material);
-
+	Sphere(Vec3f center, float radius, Material * material, int const texture_width, int const texture_height, Vec3f* textures);
+	
 	~Sphere();
 
 	Vec3f getTexture(Vec3f intersection);
+	// create a bounding box for the shape
+	BoundingBox* getBoundingBox();
+	void calculateBoundingBox();
 
 	//
 	// Functions that need to be implemented, since Sphere is a subclass of Shape
@@ -34,7 +37,7 @@ public:
 	std::tuple<bool, Hit> intersect(Ray ray);
 
 private:
-
+	BoundingBox* bbox;
 };
 
 } //namespace rt

@@ -3,8 +3,8 @@
  *
  */
 #include "Scene.h"
-
-
+#define STB_IMAGE_IMPLEMENTATION
+#include "parsers/stb_image.h"
 
 namespace rt{
 
@@ -33,6 +33,8 @@ void Scene::createScene(Value& scenespecs){
 		Shape* s = parseShape(shape);
 		shapes.push_back(s);
 	}
+
+	// this->bvh_root = new BVH(shapes);
 }
 
 LightSource* parseLightSourcce(Value& lightSpecs) {
@@ -83,6 +85,24 @@ Material* parseMaterial(Value& materialSpecs){
 Sphere* parseSphere(Value& sphereSpecs, Material* material) {
 	Vec3f center = arrayToVec(sphereSpecs["center"]);
 	float radius = sphereSpecs["radius"].GetFloat();
+	if (sphereSpecs["material"].HasMember("tPath")){
+		const char* tPath = sphereSpecs["material"]["tPath"].GetString();
+		int width, height, numChannels;
+		unsigned char* imageData = stbi_load(tPath, &width, &height, &numChannels, 0);
+		Vec3f* pixels = new Vec3f[width * height];
+		if (imageData != nullptr)
+		{
+			for (int i = 0; i < height; i++) {
+				for (int j = 0; j < width; j++) {
+					int index = (i * width * 3) + (j * 3);
+					pixels[i * width + j] = { (float)imageData[index] / 255.f, (float)imageData[index + 1] / 255.f, (float)imageData[index + 2] / 255.f };
+				}
+			}
+		}
+		stbi_image_free(imageData);
+		printf("created new sphere\n");
+		return new Sphere(center, radius, material, width, height, pixels);
+	}
 	printf("created new sphere\n");
 	return new Sphere(center, radius, material);
 }
@@ -91,6 +111,24 @@ Triangle* parseTriangle(Value& triangleSpecs, Material* material){
 	Vec3f v0 = arrayToVec(triangleSpecs["v0"]);
 	Vec3f v1 = arrayToVec(triangleSpecs["v1"]);
 	Vec3f v2 = arrayToVec(triangleSpecs["v2"]);
+	if (triangleSpecs["material"].HasMember("tPath")){
+		const char* tPath = triangleSpecs["material"]["tPath"].GetString();
+		int width, height, numChannels;
+		unsigned char* imageData = stbi_load(tPath, &width, &height, &numChannels, 0);
+		Vec3f* pixels = new Vec3f[width * height];
+		if (imageData != nullptr)
+		{
+			for (int i = 0; i < height; i++) {
+				for (int j = 0; j < width; j++) {
+					int index = (i * width * 3) + (j * 3);
+					pixels[i * width + j] = { (float)imageData[index] / 255.f, (float)imageData[index + 1] / 255.f, (float)imageData[index + 2] / 255.f };
+				}
+			}
+		}
+		stbi_image_free(imageData);
+		printf("created new triangle\n");
+		return new Triangle(v0, v1, v2, material, width, height, pixels);
+	}
 	printf("created new triangle\n");
 	return new Triangle(v0, v1, v2, material);
 }	
@@ -100,6 +138,24 @@ Plane* parsePlane(Value& planeSpecs, Material* material){
 	Vec3f v1 = arrayToVec(planeSpecs["v1"]);
 	Vec3f v2 = arrayToVec(planeSpecs["v2"]);
 	Vec3f v3 = arrayToVec(planeSpecs["v3"]);
+	if (planeSpecs["material"].HasMember("tPath")){
+		const char* tPath = planeSpecs["material"]["tPath"].GetString();
+		int width, height, numChannels;
+		unsigned char* imageData = stbi_load(tPath, &width, &height, &numChannels, 0);
+		Vec3f* pixels = new Vec3f[width * height];
+		if (imageData != nullptr)
+		{
+			for (int i = 0; i < height; i++) {
+				for (int j = 0; j < width; j++) {
+					int index = (i * width * 3) + (j * 3);
+					pixels[i * width + j] = { (float)imageData[index] / 255.f, (float)imageData[index + 1] / 255.f, (float)imageData[index + 2] / 255.f };
+				}
+			}
+		}
+		stbi_image_free(imageData);
+		printf("created new textured plane\n");
+		return new Plane(v0, v1, v2, v3, material, width, height, pixels);
+	}
 	printf("created new plane\n");
 	return new Plane(v0, v1, v2, v3, material);
 }	
@@ -116,13 +172,14 @@ Vec3f arrayToVec(Value& arr){
     return *vector;
 }
 
-// testing the intersept with all 
-std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
+// testing the intersept with all shapes in scene
+std::tuple<bool, Hit, Shape*> Scene::testIntercept(Ray ray) {
 	// minimum distance to the ray origin
 	// TODO change this to -1 and make some more changes to function utilizing this
 	float minDistance = 1000000.0f;
 	bool intercepted = false;
 	Hit interception;
+	Shape* s;
 	for (Shape* shape: this->shapes) {
 		std::tuple<bool, Hit> result = shape->intersect(ray);
 		if (std::get<0>(result)){
@@ -130,16 +187,18 @@ std::tuple<bool, Hit> Scene::testIntercept(Ray ray) {
 			// only need to know if there is any inteception at all for shadow ray
 			// saving resources
 			if (ray.raytype==SHADOW) {
-				return std::make_tuple(true, interception);
+				return std::make_tuple(true, interception, s);
 			}
 			Hit hit = std::get<1>(result);
 			if (minDistance > hit.distanceToOrigin) {
 				minDistance = hit.distanceToOrigin;
 				interception = hit;
+				s = shape;
 			}
 		}
 	}
-	return std::make_tuple(intercepted, interception);
+	return std::make_tuple(intercepted, interception, s);
+	// return this->bvh_root->testIntersect(ray);
 }
 
 // getters

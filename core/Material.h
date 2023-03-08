@@ -2,8 +2,6 @@
  * Material.h
  *
  */
-#pragma 1
-
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 #include <math/geometry.h>

@@ -3,7 +3,6 @@
  *
  *
  */
-#pragma 1
 
 #ifndef PINHOLE_H_
 #define PINHOLE_H_
@@ -20,6 +19,8 @@ public:
 	// Constructors
 	//
 	Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up);
+
+	Ray getCameraRay(int w, int h);
 
 	//
 	//Destructor

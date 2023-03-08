@@ -2,16 +2,21 @@
  * Shape.h
  *
  */
-#pragma 1
 #ifndef SHAPE_H_
 #define SHAPE_H_
 
 #include "core/RayHitStructs.h"
 #include "core/Material.h"
-#include <vector>
+#include "shapes/BoundingBox.h"
 
 
 namespace rt{
+
+enum ShapeType{
+	SPHERE,
+	PLANE,
+	TRIANGLE
+};
 
 class Shape{
 public:
@@ -20,14 +25,15 @@ public:
 	bool const textured;
 	int const texture_width;
 	int const texture_height;
-	std::vector<Vec3f*> textures;
-	std::string shapeType;
+	Vec3f* textures;
+	ShapeType shapeType;
 
 	//
 	// Constructors
 	//
-	Shape():material(nullptr), textured(false), texture_height(0), texture_width(0){};
-	Shape(Material* material, std::string type):material(material), textured(false), texture_height(0), texture_width(0), shapeType(type){};
+	Shape();
+	Shape(Material* material, ShapeType type);
+	Shape(Material* material, ShapeType type, int const texture_width, int const texture_height, Vec3f* textures);
 
 	//
 	// Destructor (must be overriden in subclass)
@@ -35,6 +41,8 @@ public:
 	virtual ~Shape(){};
 	// returns the color of pixel to be used instead of diffuse color
 	virtual Vec3f getTexture(Vec3f intersection);
+	// create a bounding box for the shape
+	virtual BoundingBox* getBoundingBox();
 
 	//
 	// Shape abstract methods (to be implemented by subclasses)
@@ -47,7 +55,8 @@ protected:
 
 };
 
-
+float pointToLineDist(Vec3f point, Vec3f v0, Vec3f v1);
+BoundingBox* compute_bounding_box(const std::vector<Shape*>& shapes);
 } //namespace rt
 
 

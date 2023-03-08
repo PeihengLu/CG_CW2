@@ -31,13 +31,13 @@ class BlinnPhong: public Material{
     // no texture
     BlinnPhong(Material* material);
 
-    Vec3f getColor(Scene* scene, LightSource* light, Camera* camera, Hit hit, const int nbounce);
+    Vec3f getColor(Scene* scene, LightSource* light, Vec3f cameraPos, Hit hit, Shape* shape, const int nbounce);
 };
 
 Vec3f attenuate_id(Vec3f intensity, float distance);
 Vec3f attenuate_is(Vec3f intensity, float distance);
-Vec3f reflect(Vec3f in, Scene* scene, Camera* camera, Hit prevHit, const int nbounce);
-Vec3f getColorFromLight(Hit hit, LightSource* light, Scene* scene, Camera* camera,const int nbounce);
+Vec3f reflect(Vec3f in, Scene* scene, Vec3f cameraPos, Hit prevHit, Shape* prevShape, const int nbounce);
+Vec3f getColorFromLight(Hit hit, Shape* shape, LightSource* light, Scene* scene, Vec3f cameraPos,const int nbounce);
 
 } //namespace rt
 

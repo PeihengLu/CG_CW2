@@ -4,7 +4,6 @@
  */
 #ifndef RAYTRACER_H_
 #define RAYTRACER_H_
-#pragma 1
 
 #include "math/geometry.h"
 #include "core/Camera.h"
